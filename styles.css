@@ -1,0 +1,473 @@
+/* ==========================================================================
+   HANWHA EAGLES DAEJEON GAME DAY TRAVEL GUIDE - STYLESHEET
+   Aesthetic: Modern Korean Travel Platform + Hanwha Eagles Passion + 3D Tactile UI
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Outfit:wght@400;500;600;700;800&family=Pretendard:wght@400;500;600;700;800;900&family=Black+Han+Sans&display=swap');
+
+:root {
+  --eagles-navy-900: #070d17;
+  --eagles-navy-800: #0b1626;
+  --eagles-navy-700: #14243b;
+  --eagles-navy-600: #1e3352;
+  
+  --eagles-orange: #f35b04;
+  --eagles-orange-hover: #ff6b18;
+  --eagles-orange-dark: #b33900;
+  --eagles-orange-glow: rgba(243, 91, 4, 0.35);
+  
+  --eagles-gold: #f59e0b;
+  --eagles-gold-dark: #b45309;
+
+  --bg-cream: #faf8f5;
+  --bg-beige: #f3eee7;
+  --bg-card-warm: #fffdfa;
+  
+  --font-sans: 'Pretendard', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Outfit', 'Pretendard', sans-serif;
+  --font-impact: 'Black Han Sans', 'Outfit', sans-serif;
+}
+
+/* Base resets & typography */
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-sans);
+  color: #1e293b;
+  background-color: var(--bg-cream);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.font-impact {
+  font-family: var(--font-impact);
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+/* ==========================================================================
+   3D TACTILE BUTTON SYSTEM
+   ========================================================================== */
+
+/* Primary Orange 3D Button */
+.btn-3d-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.85rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: linear-gradient(180deg, #ff711f 0%, #f35b04 60%, #e04b00 100%);
+  border: 1px solid #ff8843;
+  border-radius: 1rem;
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 5px 0 #a83300,
+    0 10px 20px var(--eagles-orange-glow);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.btn-3d-primary:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(180deg, #ff8238 0%, #ff6812 60%, #eb5303 100%);
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 7px 0 #a83300,
+    0 14px 24px rgba(243, 91, 4, 0.45);
+}
+
+.btn-3d-primary:active {
+  transform: translateY(4px);
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 1px 0 #a83300,
+    0 4px 8px rgba(243, 91, 4, 0.25);
+}
+
+/* Secondary Navy 3D Button */
+.btn-3d-navy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.85rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: linear-gradient(180deg, #1a3254 0%, #0e1d33 60%, #07101c 100%);
+  border: 1px solid #2a4773;
+  border-radius: 1rem;
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 5px 0 #040911,
+    0 10px 20px rgba(11, 22, 38, 0.35);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.btn-3d-navy:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(180deg, #24416c 0%, #132745 60%, #0a1728 100%);
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.3) inset,
+    0 7px 0 #040911,
+    0 14px 24px rgba(11, 22, 38, 0.45);
+}
+
+.btn-3d-navy:active {
+  transform: translateY(4px);
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 1px 0 #040911,
+    0 4px 8px rgba(11, 22, 38, 0.25);
+}
+
+/* Crisp White / Cream 3D Button */
+.btn-3d-white {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.85rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--eagles-navy-800);
+  background: linear-gradient(180deg, #ffffff 0%, #f7f4ed 100%);
+  border: 1px solid #eae5da;
+  border-radius: 1rem;
+  box-shadow: 
+    0 1px 0 #ffffff inset,
+    0 5px 0 #d6cebf,
+    0 10px 18px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-3d-white:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(180deg, #ffffff 0%, #fdfbf7 100%);
+  box-shadow: 
+    0 1px 0 #ffffff inset,
+    0 7px 0 #d6cebf,
+    0 14px 22px rgba(0, 0, 0, 0.12);
+}
+
+.btn-3d-white:active {
+  transform: translateY(4px);
+  box-shadow: 
+    0 1px 0 #ffffff inset,
+    0 1px 0 #d6cebf,
+    0 4px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Compact 3D Button for Cards */
+.btn-3d-sm {
+  padding: 0.55rem 1.15rem;
+  font-size: 0.875rem;
+  border-radius: 0.75rem;
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.3) inset,
+    0 3px 0 #a83300,
+    0 6px 12px var(--eagles-orange-glow);
+}
+.btn-3d-sm:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 4.5px 0 #a83300,
+    0 8px 16px var(--eagles-orange-glow);
+}
+.btn-3d-sm:active {
+  transform: translateY(2.5px);
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 1px 0 #a83300,
+    0 3px 6px var(--eagles-orange-glow);
+}
+
+.btn-3d-sm-navy {
+  padding: 0.55rem 1.15rem;
+  font-size: 0.875rem;
+  border-radius: 0.75rem;
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.15) inset,
+    0 3px 0 #040911,
+    0 6px 12px rgba(11, 22, 38, 0.25);
+}
+.btn-3d-sm-navy:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 4.5px 0 #040911,
+    0 8px 16px rgba(11, 22, 38, 0.35);
+}
+.btn-3d-sm-navy:active {
+  transform: translateY(2.5px);
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 1px 0 #040911,
+    0 3px 6px rgba(11, 22, 38, 0.2);
+}
+
+/* Selectable 3D Tab Buttons (Time Section & Radius) */
+.btn-3d-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  color: #475569;
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+  border: 1px solid #cbd5e1;
+  border-radius: 1rem;
+  box-shadow: 
+    0 1px 0 #ffffff inset,
+    0 4px 0 #94a3b8,
+    0 6px 12px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.btn-3d-tab:hover {
+  transform: translateY(-1.5px);
+  color: var(--eagles-navy-800);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 
+    0 1px 0 #ffffff inset,
+    0 5px 0 #94a3b8,
+    0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.btn-3d-tab.active {
+  color: #ffffff;
+  background: linear-gradient(180deg, #ff711f 0%, #f35b04 60%, #e04b00 100%);
+  border-color: #ff8843;
+  transform: translateY(2px);
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 2px 0 #a83300,
+    0 4px 10px var(--eagles-orange-glow);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* ==========================================================================
+   CARDS & SECTIONS
+   ========================================================================== */
+
+.bg-cream-section {
+  background-color: var(--bg-cream);
+}
+
+.bg-beige-section {
+  background-color: var(--bg-beige);
+}
+
+.card-tactile {
+  background-color: var(--bg-card-warm);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 10px 20px -3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s ease;
+}
+
+.card-tactile:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px -4px rgba(11, 22, 38, 0.1), 0 20px 32px -4px rgba(243, 91, 4, 0.06);
+  border-color: rgba(243, 91, 4, 0.35);
+}
+
+/* Hero visual overlays */
+.hero-stadium-bg {
+  background: 
+    linear-gradient(180deg, rgba(7, 13, 23, 0.78) 0%, rgba(11, 22, 38, 0.88) 50%, rgba(7, 13, 23, 0.98) 100%),
+    url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1920&q=85') center/cover no-repeat;
+}
+
+.stadium-glow-effect {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70vw;
+  height: 400px;
+  background: radial-gradient(circle, rgba(243, 91, 4, 0.22) 0%, rgba(245, 158, 11, 0.1) 45%, rgba(0,0,0,0) 70%);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+/* Glassmorphic elements */
+.glass-header {
+  background: rgba(11, 22, 38, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-badge {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Timeline Components */
+.timeline-track {
+  position: relative;
+}
+.timeline-track::before {
+  content: '';
+  position: absolute;
+  top: 1.5rem;
+  bottom: 1.5rem;
+  left: 1.25rem;
+  width: 3px;
+  background: linear-gradient(180deg, #f35b04 0%, #f59e0b 50%, #cbd5e1 100%);
+  border-radius: 9999px;
+}
+
+@media (min-width: 768px) {
+  .horizontal-timeline-track {
+    position: relative;
+  }
+  .horizontal-timeline-track::before {
+    content: '';
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    right: 2rem;
+    height: 3px;
+    background: linear-gradient(90deg, #f35b04 0%, #f59e0b 50%, #e2e8f0 100%);
+    border-radius: 9999px;
+    z-index: 1;
+  }
+}
+
+/* Leaflet Map Customizations */
+.leaflet-popup-content-wrapper {
+  border-radius: 1rem !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15) !important;
+  padding: 0 !important;
+  overflow: hidden;
+  border: 1px solid rgba(243, 91, 4, 0.2);
+}
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+.leaflet-popup-tip {
+  background: #ffffff !important;
+}
+
+/* Custom Marker Pins */
+.custom-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), 0 0 0 3px #ffffff;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+}
+.custom-pin:hover {
+  transform: scale(1.2) translateY(-4px);
+  z-index: 1000 !important;
+}
+.custom-pin-stadium {
+  background: linear-gradient(135deg, #ff711f 0%, #d83d00 100%);
+  width: 46px;
+  height: 46px;
+  font-size: 1.4rem;
+  box-shadow: 0 6px 14px rgba(243, 91, 4, 0.45), 0 0 0 4px #ffffff;
+  animation: pulseGlow 2.5s infinite;
+}
+.custom-pin-food {
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+}
+.custom-pin-cafe {
+  background: linear-gradient(135deg, #d97706 0%, #92400e 100%);
+}
+.custom-pin-attraction {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+.custom-pin-station {
+  background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 6px 14px rgba(243, 91, 4, 0.45), 0 0 0 4px #ffffff;
+  }
+  50% {
+    box-shadow: 0 6px 22px rgba(243, 91, 4, 0.8), 0 0 0 7px rgba(243, 91, 4, 0.3);
+  }
+}
+
+/* Animation utilities */
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.animate-float {
+  animation: floatSlow 4s ease-in-out infinite;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Hide scrollbar for clean horizontal scrollers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

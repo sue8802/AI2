@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hanwha Eagles Game Day | Daejeon Local Travel Guide</title>
+  <meta name="description" content="The ultimate one-day Daejeon local travel guide for Hanwha Eagles baseball fans. Best restaurants, cafes, attractions, transit, and itineraries near Hanwha Life Eagles Park." />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            eagles: {
+              navy: '#0B1626',
+              navyLight: '#162238',
+              orange: '#F35B04',
+              orangeHover: '#FF6B18',
+              orangeDark: '#B33900',
+              cream: '#FAF8F5',
+              beige: '#F3EEE7',
+              gold: '#F59E0B'
+            }
+          },
+          fontFamily: {
+            sans: ['Pretendard', 'Outfit', 'sans-serif'],
+            heading: ['Outfit', 'Pretendard', 'sans-serif'],
+            impact: ['Black Han Sans', 'Outfit', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Leaflet CSS & JS for Interactive Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-eagles-cream text-slate-800 antialiased selection:bg-orange-500 selection:text-white">
+
+  <!-- =========================================================================
+       1. TOP NAVIGATION BAR (STICKY GLASSMORPHISM)
+       ========================================================================= -->
+  <header class="sticky top-0 z-40 w-full glass-header transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Logo & Branding -->
+        <a href="#hero" class="flex items-center gap-3 group">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/30 text-white font-bold text-2xl group-hover:scale-105 transition-transform">
+            ⚾
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-white font-black text-xl tracking-wider font-heading">EAGLES DAEJEON</span>
+              <span class="px-2 py-0.5 text-xs font-bold bg-orange-500/90 text-white rounded-full uppercase tracking-wider">Pass</span>
+            </div>
+            <p class="text-xs text-slate-300 font-medium hidden sm:block" id="nav-tagline">한화생명 이글스파크 & 대전 로컬 가이드</p>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden lg:flex items-center gap-6 text-sm font-semibold text-slate-200">
+          <a href="#time-planner" class="hover:text-orange-400 transition-colors" data-i18n="nav_time">시간별 코스</a>
+          <a href="#restaurants" class="hover:text-orange-400 transition-colors" data-i18n="nav_restaurants">맛집 탐방</a>
+          <a href="#cafes" class="hover:text-orange-400 transition-colors" data-i18n="nav_cafes">카페 & 디저트</a>
+          <a href="#attractions" class="hover:text-orange-400 transition-colors" data-i18n="nav_attractions">추천 명소</a>
+          <a href="#transportation" class="hover:text-orange-400 transition-colors" data-i18n="nav_transport">교통 안내</a>
+          <a href="#itineraries" class="hover:text-orange-400 transition-colors" data-i18n="nav_itineraries">추천 일정</a>
+          <a href="#interactive-map" class="hover:text-orange-400 transition-colors" data-i18n="nav_map">경기장 지도</a>
+          <a href="#near-stadium" class="hover:text-orange-400 transition-colors" data-i18n="nav_radius">구장 반경</a>
+        </nav>
+
+        <!-- Action Controls -->
+        <div class="flex items-center gap-3">
+          
+          <!-- Cheer Confetti Button -->
+          <button id="btn-cheer-confetti" class="btn-3d-primary btn-3d-sm flex items-center gap-1.5" title="Shoot Eagles Confetti!">
+            <span>🎉</span>
+            <span class="hidden sm:inline font-bold" data-i18n="btn_cheer">최강한화!</span>
+          </button>
+
+          <!-- Language Switcher -->
+          <button id="btn-lang-toggle" class="btn-3d-navy btn-3d-sm flex items-center gap-1 text-xs uppercase" title="Switch Language">
+            <i data-lucide="globe" class="w-4 h-4"></i>
+            <span id="lang-label" class="font-bold">EN</span>
+          </button>
+
+          <!-- My Trip Planner Drawer Button -->
+          <button id="btn-open-planner" class="btn-3d-white btn-3d-sm relative flex items-center gap-2" title="My Game Day Plan">
+            <i data-lucide="bookmark" class="w-4 h-4 text-orange-600"></i>
+            <span class="hidden md:inline font-bold" data-i18n="btn_my_plan">나의 직관 일정</span>
+            <span id="planner-count-badge" class="w-5 h-5 bg-orange-600 text-white rounded-full text-xs font-black flex items-center justify-center">0</span>
+          </button>
+
+          <!-- Mobile Menu Button -->
+          <button id="btn-mobile-menu" class="lg:hidden p-2.5 rounded-xl bg-slate-800/80 text-white hover:bg-slate-700 transition-colors">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Menu Dropdown -->
+    <div id="mobile-menu" class="lg:hidden hidden bg-slate-900/98 border-b border-slate-800 px-6 py-5 space-y-3">
+      <a href="#time-planner" class="mobile-nav-link block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav_time">시간별 코스 (1H / 2H / 3-4H / All Day)</a>
+      <a href="#restaurants" class="mobile-nav-link block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav_restaurants">대전 찐 맛집 탐방</a>
+      <a href="#cafes" class="mobile-nav-link block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav_cafes">성심당 & 카페 디저트</a>
+      <a href="#attractions" class="mobile-nav-link block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav_attractions">추천 여행 명소</a>
+      <a href="#transportation" class="mobile-nav-link block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav_transport">대전역 ⇄ 구장 교통 가이드</a>
+      <a href="#itineraries" class="mobile-nav-link block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav_itineraries">4가지 추천 일정표</a>
+      <a href="#interactive-map" class="mobile-nav-link block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav_map">인터랙티브 구장 지도</a>
+      <a href="#near-stadium" class="mobile-nav-link block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav_radius">구장 주변 5분/10분/15분 탐색</a>
+      <a href="#stadium-guide" class="mobile-nav-link block py-2 text-orange-400 font-bold" data-i18n="nav_cheer_guide">⚾ 이글스 직관 꿀팁 & 응원가</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- =========================================================================
+         SECTION 1: HERO SECTION
+         ========================================================================= -->
+    <section id="hero" class="relative min-h-[92vh] flex items-center justify-center hero-stadium-bg overflow-hidden text-white pt-12 pb-20">
+      
+      <!-- Ambient Lighting and Glowing Sports Motifs -->
+      <div class="stadium-glow-effect"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-eagles-navy via-transparent to-black/40 pointer-events-none"></div>
+
+      <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
+        
+        <!-- Live Matchday Badge -->
+        <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass-badge mb-6 animate-pulse">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+          <span class="text-xs sm:text-sm font-semibold tracking-wide text-orange-300" id="hero-match-badge">
+            TODAY'S GAME: HANWHA EAGLES vs SSG LANDERS (18:30 KST)
+          </span>
+        </div>
+
+        <!-- Main Headline -->
+        <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight uppercase font-heading leading-tight mb-6 text-white drop-shadow-2xl">
+          <span class="block" data-i18n="hero_title_1">CHEER FOR THE EAGLES,</span>
+          <span class="bg-gradient-to-r from-orange-400 via-orange-500 to-amber-400 bg-clip-text text-transparent" data-i18n="hero_title_2">DISCOVER DAEJEON!</span>
+        </h1>
+
+        <!-- Subheadline -->
+        <p class="text-lg sm:text-2xl text-slate-200 font-medium max-w-3xl mx-auto mb-10 leading-relaxed drop-shadow" data-i18n="hero_subtitle">
+          야구 직관의 설렘과 대전의 맛, 멋, 낭만을 하루 만에 완벽하게 즐기는 원데이 로컬 가이드.
+        </p>
+
+        <!-- 3D Call to Action Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-5 mb-14">
+          <a href="#restaurants" class="btn-3d-primary w-full sm:w-auto text-lg px-8 py-4">
+            <i data-lucide="compass" class="w-5 h-5"></i>
+            <span data-i18n="btn_explore_daejeon">EXPLORE DAEJEON</span>
+          </a>
+          <a href="#time-planner" class="btn-3d-white w-full sm:w-auto text-lg px-8 py-4">
+            <i data-lucide="calendar" class="w-5 h-5 text-orange-600"></i>
+            <span data-i18n="btn_plan_gameday">PLAN MY GAME DAY</span>
+          </a>
+        </div>
+
+        <!-- Hero Matchday Live Information Bar -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto glass-badge p-4 rounded-2xl text-left">
+          <div class="p-2 border-r border-white/10">
+            <div class="text-xs text-slate-400 uppercase font-semibold" data-i18n="match_stadium">STADIUM</div>
+            <div class="font-bold text-sm sm:text-base text-white truncate">Hanwha Life Eagles Park</div>
+          </div>
+          <div class="p-2 border-r border-white/10">
+            <div class="text-xs text-slate-400 uppercase font-semibold" data-i18n="match_starter">HOME STARTER</div>
+            <div class="font-bold text-sm sm:text-base text-orange-400">Ryu Hyun-jin (#99)</div>
+          </div>
+          <div class="p-2 border-r border-white/10">
+            <div class="text-xs text-slate-400 uppercase font-semibold" data-i18n="match_weather">WEATHER</div>
+            <div class="font-bold text-sm sm:text-base text-white">24°C Sunny 🍃</div>
+          </div>
+          <div class="p-2">
+            <div class="text-xs text-slate-400 uppercase font-semibold" data-i18n="match_gates">GATES OPEN</div>
+            <div class="font-bold text-sm sm:text-base text-emerald-300">16:30 (2h before)</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION 2: QUICK GAME DAY NAVIGATION (8 LARGE CARDS)
+         ========================================================================= -->
+    <section id="quick-nav" class="py-16 bg-white border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-12">
+          <h2 class="text-xs font-black tracking-widest text-orange-600 uppercase mb-2" data-i18n="quick_nav_badge">QUICK CATEGORIES</h2>
+          <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 font-heading" data-i18n="quick_nav_heading">원하는 테마로 빠르게 찾아보세요</p>
+          <p class="text-slate-600 text-sm sm:text-base mt-2" data-i18n="quick_nav_sub">야구 관람 전후 어디를 갈지 한눈에 쉽게 확인하세요.</p>
+        </div>
+
+        <div id="quick-nav-grid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-4 sm:gap-6">
+          <!-- Dynamically populated from data.js -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION 3: "WHAT CAN I DO TODAY?" (HOW MUCH TIME DO YOU HAVE?)
+         ========================================================================= -->
+    <section id="time-planner" class="py-20 bg-eagles-cream">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1 bg-orange-100 text-orange-700 font-bold text-xs rounded-full uppercase mb-3">
+            <span>⏱️</span>
+            <span data-i18n="time_badge">TIME-BASED RECOMMENDATIONS</span>
+          </div>
+          <h2 class="text-3xl sm:text-5xl font-black text-slate-900 font-heading tracking-tight" data-i18n="time_heading">
+            HOW MUCH TIME DO YOU HAVE?
+          </h2>
+          <p class="text-slate-600 text-base sm:text-lg mt-3" data-i18n="time_sub">
+            보유한 시간에 맞춰 최적의 동선과 맛집, 카페, 구장 도착 스케줄을 제공합니다.
+          </p>
+        </div>
+
+        <!-- 3D Selectable Time Tabs -->
+        <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-12">
+          <button class="btn-3d-tab active" data-time-tab="1hr">
+            <span>⚡ 1 HOUR</span>
+          </button>
+          <button class="btn-3d-tab" data-time-tab="2hr">
+            <span>🍜 2 HOURS</span>
+          </button>
+          <button class="btn-3d-tab" data-time-tab="3-4hr">
+            <span>🌟 3–4 HOURS</span>
+          </button>
+          <button class="btn-3d-tab" data-time-tab="allday">
+            <span>🚀 ALL DAY</span>
+          </button>
+        </div>
+
+        <!-- Dynamic Time Plan Display Container -->
+        <div id="time-plan-card" class="max-w-5xl mx-auto bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-200/80 transition-all duration-300">
+          <!-- Rendered via JS -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION 4: RESTAURANT SECTION ("EAT LIKE A LOCAL")
+         ========================================================================= -->
+    <section id="restaurants" class="py-20 bg-white border-y border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+          <div>
+            <span class="text-xs font-black tracking-widest text-orange-600 uppercase" data-i18n="food_badge">DAEJEON LOCAL GASTRONOMY</span>
+            <h2 class="text-3xl sm:text-5xl font-black text-slate-900 font-heading tracking-tight mt-1" data-i18n="food_heading">
+              EAT LIKE A LOCAL
+            </h2>
+            <p class="text-slate-600 text-sm sm:text-base mt-2 max-w-2xl" data-i18n="food_sub">
+              칼국수의 도시 대전! 칼칼한 오징어/두부 두루치기부터 참숯 한우갈비, 경기장 치맥까지 엄선한 필수 맛집.
+            </p>
+          </div>
+
+          <!-- Restaurant Search & Filter Controls -->
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+              <input type="text" id="restaurant-search" placeholder="맛집 이름, 메뉴 검색..." class="pl-10 pr-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-slate-50 w-56 sm:w-64" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Category Pills -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-3 mb-8" id="food-filter-pills">
+          <button class="food-filter-btn px-4 py-2 rounded-xl text-sm font-bold bg-orange-600 text-white shadow-md active" data-category="all">전체 All</button>
+          <button class="food-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-category="local">🍚 대전 로컬 (두루치기)</button>
+          <button class="food-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-category="noodles">🍜 칼국수 성지</button>
+          <button class="food-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-category="bbq">🍖 숯불구이 BBQ</button>
+          <button class="food-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-category="chicken">🍗 구장 치맥/통닭</button>
+          <button class="food-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-category="casual">🍣 육회/든든한 한끼</button>
+          <button class="food-filter-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-category="night">🌙 야시장/포차</button>
+        </div>
+
+        <!-- Restaurant Grid -->
+        <div id="restaurants-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Rendered dynamically -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION 5: CAFE & DESSERT SECTION
+         ========================================================================= -->
+    <section id="cafes" class="py-20 bg-eagles-beige/50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-12">
+          <span class="text-xs font-black tracking-widest text-amber-700 uppercase" data-i18n="cafe_badge">BAKERY & DESSERT PILGRIMAGE</span>
+          <h2 class="text-3xl sm:text-5xl font-black text-slate-900 font-heading tracking-tight mt-1" data-i18n="cafe_heading">
+            COFFEE, DESSERT & A LITTLE BREAK
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base mt-2" data-i18n="cafe_sub">
+            대한민국 빵의 성지 성심당 본점부터, 대흥동 감성 한옥 카페, 숲속 리조트 카페까지 달콤한 휴식을 즐기세요.
+          </p>
+        </div>
+
+        <!-- Sung Sim Dang Hero Spotlight Banner -->
+        <div class="bg-gradient-to-r from-amber-900 via-orange-950 to-slate-900 text-white rounded-3xl p-6 sm:p-10 mb-12 shadow-2xl overflow-hidden relative">
+          <div class="absolute -right-10 -bottom-10 w-80 h-80 bg-orange-500/20 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+            <div class="lg:col-span-7 space-y-4">
+              <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/20 border border-amber-400/40 rounded-full text-amber-300 text-xs font-bold">
+                👑 1956년 창립 · 대한민국 No.1 빵지순례
+              </div>
+              <h3 class="text-3xl sm:text-4xl font-extrabold font-heading">
+                성심당 본점 & 케익부띠끄
+              </h3>
+              <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                대전 야구 직관에 결코 빠질 수 없는 필수 코스! 바삭한 튀김소보로와 부추빵, 그리고 SNS를 강타한 2kg 과일 시루 케이크를 구장 가기 전 꼭 챙기세요.
+              </p>
+              <div class="flex flex-wrap gap-2 text-xs font-semibold text-amber-200">
+                <span class="bg-white/10 px-3 py-1.5 rounded-lg">📍 은행동 본점 (구장 도보 15분)</span>
+                <span class="bg-white/10 px-3 py-1.5 rounded-lg">🍞 시그니처: 튀김소보로 · 부추빵 · 망고시루</span>
+                <span class="bg-white/10 px-3 py-1.5 rounded-lg">⏰ 08:00 ~ 22:00</span>
+              </div>
+              <div class="pt-2 flex flex-wrap gap-3">
+                <button class="btn-3d-primary btn-3d-sm" onclick="showVenueDetail('sungsimdang_main')">
+                  <span>성심당 본점 가이드 보기</span>
+                </button>
+                <button class="btn-3d-white btn-3d-sm" onclick="showVenueDetail('sungsimdang_boutique')">
+                  <span>케익부띠끄 보기</span>
+                </button>
+              </div>
+            </div>
+            <div class="lg:col-span-5 grid grid-cols-2 gap-3">
+              <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80" alt="Sung Sim Dang Bakery" class="rounded-2xl h-48 w-full object-cover shadow-lg hover:scale-105 transition-transform" />
+              <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80" alt="Cake Boutique" class="rounded-2xl h-48 w-full object-cover shadow-lg hover:scale-105 transition-transform" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Cafe Grid -->
+        <div id="cafes-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Rendered dynamically -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION 6: DAEJEON ATTRACTIONS ("SHORT TRIPS, BIG MEMORIES")
+         ========================================================================= -->
+    <section id="attractions" class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+          <div>
+            <span class="text-xs font-black tracking-widest text-orange-600 uppercase" data-i18n="spot_badge">SHORT TRIPS, BIG MEMORIES</span>
+            <h2 class="text-3xl sm:text-5xl font-black text-slate-900 font-heading tracking-tight mt-1" data-i18n="spot_heading">
+              SHORT TRIPS, BIG MEMORIES
+            </h2>
+            <p class="text-slate-600 text-sm sm:text-base mt-2 max-w-2xl" data-i18n="spot_sub">
+              경기 전후 1~2시간으로 충분히 다녀올 수 있는 대전의 핵심 명소들입니다.
+            </p>
+          </div>
+
+          <!-- Attraction Filters -->
+          <div class="flex flex-wrap gap-2" id="attraction-filter-pills">
+            <button class="attraction-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white active" data-filter="all">전체 ALL</button>
+            <button class="attraction-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200" data-filter="nearby">구장 근처 NEARBY</button>
+            <button class="attraction-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200" data-filter="family">가족 코스 FAMILY</button>
+            <button class="attraction-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200" data-filter="photo">포토스팟 PHOTO</button>
+            <button class="attraction-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200" data-filter="rainy">우천/실내 RAINY</button>
+          </div>
+        </div>
+
+        <!-- Attraction Cards Grid -->
+        <div id="attractions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Rendered dynamically -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION 7: TRANSPORTATION GUIDE (DAEJEON STATION ⇄ EAGLES PARK)
+         ========================================================================= -->
+    <section id="transportation" class="py-20 bg-slate-900 text-white relative overflow-hidden">
+      <div class="absolute inset-0 bg-[radial-gradient(#f35b04_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none"></div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        
+        <div class="text-center max-w-3xl mx-auto mb-12">
+          <span class="text-xs font-black tracking-widest text-orange-400 uppercase" data-i18n="transport_badge">EXPRESS MOBILITY GUIDE</span>
+          <h2 class="text-3xl sm:text-5xl font-black font-heading tracking-tight mt-1 text-white" data-i18n="transport_heading">
+            DAEJEON STATION ⇄ EAGLES PARK
+          </h2>
+          <p class="text-slate-300 text-sm sm:text-base mt-2" data-i18n="transport_sub">
+            KTX/SRT 대전역에서 한화생명 이글스파크까지 가장 빠르고 편리하게 이동하는 방법.
+          </p>
+        </div>
+
+        <!-- 4 Transport Mode Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12" id="transport-options-grid">
+          <!-- Rendered dynamically from data.js -->
+        </div>
+
+        <!-- Visual Route Diagram & Steps -->
+        <div class="bg-slate-800/90 rounded-3xl p-6 sm:p-10 border border-slate-700 shadow-2xl">
+          <div class="flex flex-col lg:flex-row items-center justify-between gap-8 mb-8 pb-8 border-b border-slate-700">
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+                <span>🗺️</span>
+                <span>대전역에서 야구장까지 한눈에 보는 직관 로드맵</span>
+              </h3>
+              <p class="text-sm text-slate-400 mt-1">
+                거리 약 2.4km · 주요 환승 정류장 및 추천 랜드마크 경유 코스
+              </p>
+            </div>
+            <button id="btn-show-full-directions" class="btn-3d-primary text-base px-6 py-3">
+              <i data-lucide="navigation" class="w-5 h-5"></i>
+              <span data-i18n="btn_get_directions">GET DIRECTIONS</span>
+            </button>
+          </div>
+
+          <!-- Step by Step Road Visual -->
+          <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 text-center">
+            <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700 relative">
+              <div class="text-2xl mb-1">🚉</div>
+              <div class="text-xs text-orange-400 font-bold">START</div>
+              <div class="font-bold text-white text-sm">KTX 대전역</div>
+              <div class="text-xs text-slate-400 mt-1">서광장 1번 출구</div>
+            </div>
+            <div class="hidden sm:flex items-center justify-center text-slate-500">➔</div>
+            <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700">
+              <div class="text-2xl mb-1">🌉</div>
+              <div class="text-xs text-slate-400 font-bold">WAYPOINT 1</div>
+              <div class="font-bold text-white text-sm">목척교 & 중앙시장</div>
+              <div class="text-xs text-slate-400 mt-1">전통 먹거리 골목</div>
+            </div>
+            <div class="hidden sm:flex items-center justify-center text-slate-500">➔</div>
+            <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700">
+              <div class="text-2xl mb-1">🥐</div>
+              <div class="text-xs text-slate-400 font-bold">WAYPOINT 2</div>
+              <div class="font-bold text-white text-sm">성심당 본점 & 대흥동</div>
+              <div class="text-xs text-slate-400 mt-1">빵지순례 & 카페거리</div>
+            </div>
+          </div>
+
+          <!-- Game Day Travel Tips Alert Box -->
+          <div class="mt-8 p-5 bg-orange-950/40 border border-orange-500/30 rounded-2xl text-sm text-slate-300 space-y-2" id="transport-tips-box">
+            <!-- Rendered from data.js -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION 8: GAME DAY ITINERARIES (4 PRE-MADE SCHEDULES)
+         ========================================================================= -->
+    <section id="itineraries" class="py-20 bg-eagles-cream">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-12">
+          <span class="text-xs font-black tracking-widest text-orange-600 uppercase" data-i18n="itinerary_badge">CURATED ONE-DAY SCHEDULES</span>
+          <h2 class="text-3xl sm:text-5xl font-black text-slate-900 font-heading tracking-tight mt-1" data-i18n="itinerary_heading">
+            YOUR PERFECT EAGLES GAME DAY
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base mt-2" data-i18n="itinerary_sub">
+            방문 스타일에 맞게 선택하는 4가지 원스톱 풀코스 타임라인.
+          </p>
+        </div>
+
+        <!-- 4 Itinerary Cards Grid -->
+        <div class="space-y-12" id="itineraries-container">
+          <!-- Rendered dynamically from data.js -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION 9: INTERACTIVE MAP (LEAFLET CENTERED AT EAGLES PARK)
+         ========================================================================= -->
+    <section id="interactive-map" class="py-20 bg-white border-y border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+          <div>
+            <span class="text-xs font-black tracking-widest text-orange-600 uppercase" data-i18n="map_badge">LIVE EXPLORATION MAP</span>
+            <h2 class="text-3xl sm:text-4xl font-black text-slate-900 font-heading tracking-tight mt-1" data-i18n="map_heading">
+              HANWHA LIFE EAGLES PARK MAP
+            </h2>
+            <p class="text-slate-600 text-sm mt-1" data-i18n="map_sub">
+              이글스파크 중심 맛집, 카페, 명소, 굿즈샵, 주차장 위치를 실시간으로 탐색하세요.
+            </p>
+          </div>
+
+          <!-- Map Filter Buttons -->
+          <div class="flex flex-wrap gap-2">
+            <button class="map-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-orange-600 text-white active" data-map-category="all">전체 ALL</button>
+            <button class="map-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-map-category="food">🍜 맛집</button>
+            <button class="map-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-map-category="cafe">☕ 카페</button>
+            <button class="map-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-map-category="spot">📸 명소</button>
+            <button class="map-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-map-category="stadium">🏟️ 구장시설</button>
+          </div>
+        </div>
+
+        <!-- Map Container & Info Sidebar -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          <div class="lg:col-span-8 rounded-3xl overflow-hidden shadow-xl border border-slate-200 h-[480px] sm:h-[540px] relative">
+            <div id="map-element" class="w-full h-full z-10"></div>
+            <!-- Map Overlay Legend -->
+            <div class="absolute bottom-4 left-4 z-20 glass-panel px-3 py-2 rounded-xl text-xs font-medium text-slate-800 shadow-lg flex items-center gap-3">
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-orange-600 inline-block"></span> 이글스파크</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span> 맛집</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-amber-600 inline-block"></span> 카페</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span> 명소</span>
+            </div>
+          </div>
+
+          <!-- Map Active Card Preview Panel -->
+          <div class="lg:col-span-4 bg-slate-50 rounded-3xl p-6 border border-slate-200 flex flex-col justify-between" id="map-preview-panel">
+            <div>
+              <div class="text-xs font-bold text-orange-600 uppercase mb-1">SELECTED SPOT</div>
+              <h3 class="text-xl font-bold text-slate-900" id="map-selected-title">한화생명 이글스파크</h3>
+              <p class="text-xs text-slate-500 mt-1" id="map-selected-addr">대전광역시 중구 대종로 373 (부사동)</p>
+              
+              <div class="mt-4 rounded-2xl overflow-hidden h-40 bg-slate-200">
+                <img id="map-selected-img" src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80" alt="Spot Preview" class="w-full h-full object-cover" />
+              </div>
+
+              <div class="mt-4 space-y-2 text-xs text-slate-600">
+                <div class="flex justify-between py-1 border-b border-slate-200">
+                  <span class="font-medium text-slate-500">구장 기준 거리</span>
+                  <span class="font-bold text-slate-800" id="map-selected-dist">0 km (중심지)</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-200">
+                  <span class="font-medium text-slate-500">추천 소요시간</span>
+                  <span class="font-bold text-slate-800" id="map-selected-time">경기 관람 약 3~4시간</span>
+                </div>
+                <div class="py-1">
+                  <span class="font-medium text-slate-500">주요 특징</span>
+                  <p class="font-medium text-slate-700 mt-0.5" id="map-selected-desc">1루 오렌지 응원존, 보리떡볶이와 가마솥 통닭이 유명한 한화이글스의 홈구장.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 flex gap-2">
+              <button id="map-btn-directions" class="btn-3d-primary btn-3d-sm w-full">
+                <span>길찾기 길안내</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION 10: "WHAT'S AROUND EAGLES PARK?" (RADIUS EXPLORER)
+         ========================================================================= -->
+    <section id="near-stadium" class="py-20 bg-eagles-cream">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-10">
+          <span class="text-xs font-black tracking-widest text-orange-600 uppercase" data-i18n="radius_badge">DISTANCE RADIUS EXPLORER</span>
+          <h2 class="text-3xl sm:text-5xl font-black text-slate-900 font-heading tracking-tight mt-1" data-i18n="radius_heading">
+            WHAT'S AROUND EAGLES PARK?
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base mt-2" data-i18n="radius_sub">
+            야구장 게이트를 기준으로 5분, 10분, 15분, 20분 거리 내에 무엇이 있는지 즉시 확인하세요.
+          </p>
+        </div>
+
+        <!-- Radius Selector 3D Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-10">
+          <button class="btn-3d-tab active" data-radius-btn="5min">
+            <span>🚶 5 MIN (도보 5분권)</span>
+          </button>
+          <button class="btn-3d-tab" data-radius-btn="10min">
+            <span>☕ 10 MIN (대흥동 카페거리)</span>
+          </button>
+          <button class="btn-3d-tab" data-radius-btn="15min">
+            <span>🥐 15 MIN (성심당 & 스카이로드)</span>
+          </button>
+          <button class="btn-3d-tab" data-radius-btn="20min">
+            <span>🚉 20 MIN (대전역 & 야시장)</span>
+          </button>
+        </div>
+
+        <!-- Radius Places Container -->
+        <div id="radius-places-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Rendered dynamically -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION 11: EAGLES CHEERING & STADIUM GUIDE
+         ========================================================================= -->
+    <section id="stadium-guide" class="py-20 bg-gradient-to-br from-slate-950 via-eagles-navy to-slate-900 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          <div class="lg:col-span-6 space-y-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-orange-500/20 border border-orange-500/40 rounded-full text-orange-400 text-xs font-bold">
+              🔥 직관 승리의 주문
+            </div>
+            <h2 class="text-3xl sm:text-5xl font-black font-heading leading-tight">
+              한화이글스 응원 문화 & 직관 100% 즐기기
+            </h2>
+            <p class="text-slate-300 text-base leading-relaxed">
+              1루 오렌지 응원존(101~106 블록)의 열기와 전설의 육성응원 "최! 강! 한! 화!", 그리고 구장의 명물 보리떡볶이까지 완벽 직관 팁을 전수합니다.
+            </p>
+
+            <div class="space-y-4 pt-2">
+              <div class="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-start gap-4">
+                <span class="text-3xl">🎵</span>
+                <div>
+                  <h4 class="font-bold text-orange-400">대표 응원가: "나는 행복합니다"</h4>
+                  <p class="text-xs text-slate-300 mt-0.5">"나는 행복합니다~ 나는 행복합니다~ 이글스라 행복합니다!"</p>
+                </div>
+              </div>
+              <div class="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-start gap-4">
+                <span class="text-3xl">🍗</span>
+                <div>
+                  <h4 class="font-bold text-orange-400">구장 4대 먹거리 필수 체크</h4>
+                  <p class="text-xs text-slate-300 mt-0.5">보리떡볶이, 갓 튀긴 가마솥 통닭, 순대볶음, 살얼음 생맥주</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 flex flex-wrap gap-4">
+              <button id="btn-cheer-modal-open" class="btn-3d-primary">
+                <i data-lucide="music" class="w-5 h-5"></i>
+                <span>응원가 & 좌석 가이드 보기</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="lg:col-span-6">
+            <div class="relative rounded-3xl overflow-hidden border-2 border-orange-500/30 shadow-2xl shadow-orange-500/20">
+              <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1000&q=80" alt="Eagles Park Cheering Stadium" class="w-full h-96 object-cover" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-8">
+                <span class="text-xs font-black uppercase text-orange-400 tracking-wider">HANWHA LIFE EAGLES PARK</span>
+                <h3 class="text-2xl font-bold text-white mt-1">1루 오렌지 응원존의 뜨거운 함성</h3>
+                <p class="text-xs text-slate-300 mt-1">주황색 유니폼과 응원봉으로 하나 되는 순간</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION 12: FINAL CALL TO ACTION
+         ========================================================================= -->
+    <section id="cta" class="py-24 bg-gradient-to-b from-white to-eagles-cream text-center relative overflow-hidden border-t border-slate-200">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+        
+        <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-xl shadow-orange-500/30 text-white text-4xl mb-8 animate-float">
+          ⚾
+        </div>
+
+        <h2 class="text-3xl sm:text-5xl md:text-6xl font-black text-slate-900 font-heading tracking-tight uppercase leading-tight mb-4" data-i18n="cta_heading">
+          MAKE YOUR EAGLES GAME DAY<br />A DAY TO REMEMBER.
+        </h2>
+
+        <p class="text-lg sm:text-2xl text-slate-600 font-medium mb-12" data-i18n="cta_sub">
+          Good food. Great places. An unforgettable game.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-5">
+          <a href="#restaurants" class="btn-3d-primary w-full sm:w-auto text-lg px-8 py-4">
+            <i data-lucide="utensils" class="w-5 h-5"></i>
+            <span data-i18n="btn_find_restaurant">FIND A RESTAURANT</span>
+          </a>
+          <a href="#attractions" class="btn-3d-navy w-full sm:w-auto text-lg px-8 py-4">
+            <i data-lucide="map-pin" class="w-5 h-5"></i>
+            <span data-i18n="btn_explore_daejeon_cta">EXPLORE DAEJEON</span>
+          </a>
+          <a href="#time-planner" class="btn-3d-white w-full sm:w-auto text-lg px-8 py-4">
+            <i data-lucide="sparkles" class="w-5 h-5 text-orange-600"></i>
+            <span data-i18n="btn_plan_gameday_cta">PLAN MY GAME DAY</span>
+          </a>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================================
+       SECTION 13: MEMORABLE FOOTER
+       ========================================================================= -->
+  <footer class="bg-eagles-navy text-slate-400 py-16 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+        
+        <div class="space-y-4 md:col-span-2">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-orange-600 flex items-center justify-center text-white font-bold text-xl">
+              ⚾
+            </div>
+            <span class="text-white font-black text-xl tracking-wider font-heading">EAGLES DAEJEON PASS</span>
+          </div>
+          <p class="text-sm text-slate-400 max-w-md leading-relaxed">
+            한화이글스 팬들과 대전을 찾는 여행객을 위한 프리미엄 당일치기 로컬 트래블 플랫폼입니다. 야구장 주변 찐 맛집, 성심당 빵지순례, 대전역 교통을 한눈에 확인하세요.
+          </p>
+          <div class="flex items-center gap-3 text-xs text-slate-500">
+            <span>🏟️ Hanwha Life Eagles Park</span>
+            <span>•</span>
+            <span>대전광역시 중구 대종로 373</span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Quick Links</h4>
+          <ul class="space-y-2.5 text-sm">
+            <li><a href="#restaurants" class="hover:text-orange-400 transition-colors">대전 대표 맛집 (두루치기/칼국수)</a></li>
+            <li><a href="#cafes" class="hover:text-orange-400 transition-colors">성심당 & 대흥동 카페거리</a></li>
+            <li><a href="#transportation" class="hover:text-orange-400 transition-colors">대전역 ⇄ 구장 셔틀 및 버스</a></li>
+            <li><a href="#interactive-map" class="hover:text-orange-400 transition-colors">이글스파크 인터랙티브 맵</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Visitor Help</h4>
+          <ul class="space-y-2.5 text-sm">
+            <li><span>📞 대전 관광 안내: 1330</span></li>
+            <li><span>⚾ 한화이글스 티켓: 티켓링크</span></li>
+            <li><span>🚆 KTX 예매: 코레일 (Korail)</span></li>
+            <li><span>🅿️ 구장 주차: 문창동/대흥동 공영</span></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+        <p>© 2026 Hanwha Eagles Daejeon Travel Pass. Designed for passionate baseball fans.</p>
+        <div class="flex items-center gap-4">
+          <span class="text-orange-400 font-semibold">최강한화 승리를 기원합니다! 🦅</span>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       MODAL 1: VENUE DETAILS MODAL
+       ========================================================================= -->
+  <div id="venue-modal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative animate-in fade-in zoom-in duration-200">
+      
+      <!-- Close Button -->
+      <button id="btn-close-modal" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-slate-900/60 text-white flex items-center justify-center hover:bg-slate-900 transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Modal Image Banner -->
+      <div class="relative h-64 sm:h-72 w-full bg-slate-900">
+        <img id="modal-venue-img" src="" alt="Venue" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6">
+          <span id="modal-venue-category" class="px-3 py-1 bg-orange-600 text-white rounded-full text-xs font-bold w-max mb-2">CATEGORY</span>
+          <h3 id="modal-venue-name" class="text-2xl sm:text-3xl font-black text-white font-heading">VENUE NAME</h3>
+          <p id="modal-venue-address" class="text-xs text-slate-300 mt-1">Address string</p>
+        </div>
+      </div>
+
+      <!-- Modal Content Body -->
+      <div class="p-6 sm:p-8 space-y-6">
+        
+        <!-- Quick Badges Bar -->
+        <div class="grid grid-cols-3 gap-3 p-4 bg-slate-50 rounded-2xl text-center text-xs">
+          <div>
+            <div class="text-slate-400 font-semibold">구장 거리</div>
+            <div id="modal-venue-dist" class="font-black text-slate-800 text-sm mt-0.5">-</div>
+          </div>
+          <div>
+            <div class="text-slate-400 font-semibold">이동 시간</div>
+            <div id="modal-venue-travel" class="font-black text-slate-800 text-sm mt-0.5">-</div>
+          </div>
+          <div>
+            <div class="text-slate-400 font-semibold">추천 대상</div>
+            <div id="modal-venue-rec" class="font-black text-orange-600 text-sm mt-0.5">-</div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-2">소개 & 특징</h4>
+          <p id="modal-venue-desc" class="text-sm text-slate-600 leading-relaxed">
+            Description
+          </p>
+        </div>
+
+        <!-- Signature Menu or Features -->
+        <div id="modal-menu-section">
+          <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-2">대표 시그니처</h4>
+          <div id="modal-venue-menu" class="p-4 bg-orange-50/70 border border-orange-200/60 rounded-2xl text-sm font-bold text-orange-950">
+            Menu text
+          </div>
+        </div>
+
+        <!-- Opening Hours & Practical Info -->
+        <div class="space-y-2 text-xs text-slate-600 bg-slate-50 p-4 rounded-2xl">
+          <div class="flex justify-between">
+            <span class="font-semibold text-slate-500">영업시간</span>
+            <span id="modal-venue-hours" class="font-bold text-slate-800">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="font-semibold text-slate-500">가격대</span>
+            <span id="modal-venue-price" class="font-bold text-slate-800">-</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-2 flex flex-col sm:flex-row gap-3">
+          <button id="modal-btn-add-plan" class="btn-3d-primary flex-1 py-3">
+            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+            <span>내 직관 일정에 추가</span>
+          </button>
+          <a id="modal-btn-map" href="#" target="_blank" class="btn-3d-navy flex-1 py-3">
+            <i data-lucide="map" class="w-5 h-5"></i>
+            <span>네이버/카카오 길찾기</span>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 2: "MY GAME DAY PLANNER" SLIDE-OVER DRAWER
+       ========================================================================= -->
+  <div id="planner-drawer" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex justify-end">
+    <div class="bg-white w-full max-w-md h-full shadow-2xl p-6 flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-300">
+      
+      <div>
+        <div class="flex items-center justify-between pb-4 border-b border-slate-200">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">📋</span>
+            <h3 class="text-xl font-bold text-slate-900 font-heading">나의 야구 직관 일정표</h3>
+          </div>
+          <button id="btn-close-planner" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100">
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+        </div>
+
+        <p class="text-xs text-slate-500 mt-3">
+          방문하고 싶은 맛집, 카페, 명소를 담아 나만의 당일치기 코스를 완성하세요!
+        </p>
+
+        <!-- Saved Items List Container -->
+        <div id="planner-items-list" class="mt-6 space-y-3">
+          <!-- Dynamically inserted saved items -->
+        </div>
+
+        <!-- Empty State (Shown when 0 items) -->
+        <div id="planner-empty-state" class="py-16 text-center text-slate-400 space-y-3">
+          <div class="text-4xl">🏷️</div>
+          <p class="text-sm font-medium">아직 담긴 장소가 없습니다.</p>
+          <p class="text-xs text-slate-400">맛집이나 카페 카드의 <span class="font-bold text-orange-600">+ 담기</span> 버튼을 눌러보세요!</p>
+        </div>
+      </div>
+
+      <!-- Drawer Bottom Actions -->
+      <div class="pt-6 border-t border-slate-200 space-y-3">
+        <div class="p-4 bg-orange-50 rounded-2xl text-xs space-y-1">
+          <div class="flex justify-between font-bold text-slate-800">
+            <span>총 선택 장소</span>
+            <span id="planner-total-count" class="text-orange-600">0 곳</span>
+          </div>
+          <div class="flex justify-between text-slate-500">
+            <span>야구장 입장 권장 시간</span>
+            <span class="font-semibold text-slate-800">17:00 (경기 1.5시간 전)</span>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <button id="btn-print-plan" class="btn-3d-navy flex-1 py-3 text-sm">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span>일정표 인쇄 / PDF</span>
+          </button>
+          <button id="btn-clear-plan" class="p-3 rounded-2xl bg-slate-100 text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-colors" title="전체 비우기">
+            <i data-lucide="trash-2" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 3: CHEER SONGS & STADIUM SOUND MODAL
+       ========================================================================= -->
+  <div id="cheer-modal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div class="bg-slate-900 text-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative border border-slate-700">
+      
+      <button id="btn-close-cheer" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 rounded-2xl bg-orange-600 flex items-center justify-center text-2xl font-black">
+          🦅
+        </div>
+        <div>
+          <h3 class="text-2xl font-black font-heading text-white">한화이글스 응원가 가사집</h3>
+          <p class="text-xs text-orange-400 font-semibold">1루 응원석 필수 암기 가사</p>
+        </div>
+      </div>
+
+      <div class="space-y-4 mb-6">
+        <div class="p-5 bg-slate-800 rounded-2xl border border-slate-700">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-bold text-orange-400 uppercase">대표 떼창 응원가</span>
+            <button class="px-2.5 py-1 rounded-full bg-orange-600/30 text-orange-300 text-xs font-bold hover:bg-orange-600/50" onclick="playCheerBeat()">
+              🎵 박자 재생
+            </button>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-2">"나는 행복합니다"</h4>
+          <p class="text-sm text-slate-300 bg-slate-900/60 p-3 rounded-xl font-mono leading-relaxed">
+            "나는 행복합니다~ 나는 행복합니다~<br />
+            나는 행복합니다~ 이글스라 행복합니다!"
+          </p>
+        </div>
+
+        <div class="p-5 bg-slate-800 rounded-2xl border border-slate-700">
+          <span class="text-xs font-bold text-orange-400 uppercase block mb-1">공식 파이팅 응원가</span>
+          <h4 class="text-lg font-bold text-white mb-2">"영원한 한화이글스"</h4>
+          <p class="text-sm text-slate-300 bg-slate-900/60 p-3 rounded-xl font-mono leading-relaxed">
+            "승리를 향해 날아올라라~ 최강 한화!<br />
+            워어어어~ 날려버려라 홈런!"
+          </p>
+        </div>
+      </div>
+
+      <button id="btn-cheer-modal-confetti" class="btn-3d-primary w-full py-3.5 text-base">
+        <span>🎉 최강한화 승리 팡파레 터트리기!</span>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
